@@ -1,16 +1,5 @@
-
-// Require the necessary discord.js classes
-const discord = require('discord.js')
-//const CmdEmbed = require('./CmdEmbed.js')
 const { Client, Intents, GuildAuditLogs, InteractionCollector } = require('discord.js');
 const { token, clientID, appID} = require('./config.json');  // FROM GITHUB <-- IF YOU'RE SOURCING THIS CODE SUPPLY YOUR OWN
-// multiple yids for double quota limit
-const YID = 'AIzaSyDVsDvSM9_I1pP6fhuEZPkFTVodvzUyS3A'
-//const YID = 'AIzaSyAtRbbaV9DPG1Gqto87QEoTcwdb-le5kNI'
-const play = require('play-dl'); // alternative to ytdl bc aborting
-const axios = require('axios');
-var he = require('he'); // decode html entities
-const { MessageEmbed } = require('discord.js');
 const {
 	AudioPlayerStatus,
 	StreamType,
