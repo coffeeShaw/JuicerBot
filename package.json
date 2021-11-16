@@ -1,0 +1,31 @@
+{
+  "name": "JuiceBot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^0.8.2",
+    "@discordjs/opus": "^0.6.0",
+    "@discordjs/rest": "0.1.0-canary.0",
+    "@discordjs/voice": "^0.7.3",
+    "axios": "^0.24.0",
+    "bug-killer": "^4.4.4",
+    "discord-api-types": "^0.24.0",
+    "discord.js": "^13.3.1",
+    "ffmpeg-static": "^4.4.0",
+    "he": "^1.2.0",
+    "libsodium-wrappers": "^0.7.9",
+    "lien": "^3.3.1",
+    "opn": "^6.0.0",
+    "play-dl": "^1.2.9",
+    "r-json": "^1.2.10",
+    "youtube-api": "^3.0.1",
+    "ytdl-core": "^4.9.1"
+  }
+}
