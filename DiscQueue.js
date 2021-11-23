@@ -76,11 +76,6 @@ class DiscQueue{
 
     // pushes new playback object to back of queue, plays object if it is in the front of the queue
     handleQueuePush = (vidItem, cmdChannel, conn) => {
-       /* vidName = he.decode(vidName);
-        const vidItem = {
-            url: vidUrl,
-            title: vidName
-        };*/
         console.log("pushing item")
         this.playQueue.push(vidItem);
         console.log('checking play')
@@ -99,12 +94,6 @@ class DiscQueue{
 
     // pushes new playback object to front of queue, returns object in front of queue
     handleQueueFrontInsert = (vidItem, cmdChannel) => {
-        console.log('non refresh')
-       /* vidName = he.decode(vidName);
-        const vidItem = {
-            url: vidUrl,
-            title: vidName
-        };*/
         if(this.playQueue.length === 0){
             this.playQueue.push(vidItem);
         }
@@ -117,11 +106,6 @@ class DiscQueue{
 
     // pushes new playback object to front of queue, returns object in front of queue, sets new connection (in case called before normal push)
     handleQueueFrontInsertInit = (vidItem, cmdChannel, conn) => {
-       /* vidName = he.decode(vidName);
-        const vidItem = {
-            url: vidUrl,
-            title: vidName
-        };*/
         if(this.playQueue.length === 0){
             this.playQueue.push(vidItem);
         }
@@ -163,6 +147,17 @@ class DiscQueue{
         }
         if(this.playQueue.length === 0){
             console.log(this.player)
+            if(typeof(this.player) !== "object" ){  // base case we have no player yet (skip called before play), init player
+                console.log('creating player')
+                this.player = createAudioPlayer({
+                    behaviors: {
+                        noSubscriber: NoSubscriberBehavior.Play
+                    }
+                });
+                var self = this;    // need reference to this for listener
+                this.player.on(AudioPlayerStatus.Idle, function(){self.handleQueuePop(cmdChannel)});
+                this.player.setMaxListeners(1);
+            }
             this.player.pause();
         }
     }

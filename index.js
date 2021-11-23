@@ -59,9 +59,6 @@ client.on('messageCreate', async message => {
 			adapterCreator: guild.voiceAdapterCreator,
 		});
         var vidItem = await infoFetcher.getPlayData(searchQuery);
-        console.log('START VID ITEM')
-        console.log(vidItem)
-        console.log('END VID ITEM')
         if(cmdStr === ')play'){
             Boombox[guildID] = Boombox[guildID] || new DiscQueue();
             Boombox[guildID].handleQueuePush(vidItem, cmdChannel, connection)
@@ -84,14 +81,13 @@ client.on('messageCreate', async message => {
 
         message.channel.send("IT'S HIGH NUN COL CESSIDY");
         const playItem = {
-        'playStr' : 'https://www.youtube.com/watch?v=L78yVFeyvRo',
-        'songName' : 'Down With The Sickness - Disturbed'
+        'url' : 'https://www.youtube.com/watch?v=L78yVFeyvRo',
+        'title' : 'Down With The Sickness - Disturbed'
         }
         Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
     }
     
     if(cmdStr === ')skip'){
-        // handleQueuePop(guildID);
         Boombox[guildID] = Boombox[guildID] || new DiscQueue();
         Boombox[guildID].handleQueuePop(cmdChannel);
     }
@@ -108,8 +104,26 @@ client.on('messageCreate', async message => {
 			adapterCreator: guild.voiceAdapterCreator,
 		});
         const playItem = {
-            'playStr' : 'https://www.youtube.com/watch?v=aGmMyeq9c34',
-            'songName' : 'Speedy slubbies'
+            'url' : 'https://www.youtube.com/watch?v=aGmMyeq9c34',
+            'title' : 'Speedy slubbies'
+        }
+        Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
+    }
+
+    if(cmdStr === ')getthejuice'){
+        Boombox[guildID] = Boombox[guildID] || new DiscQueue();
+        cmdChannel = message.channel;
+        var channelID = message.member.voice.channelId;
+		connection = joinVoiceChannel({
+			selfDeaf: false,
+			selfMute: false,
+			channelId: channelID,
+			guildId: guildID,
+			adapterCreator: guild.voiceAdapterCreator,
+		});
+        const playItem = {
+            'url' : 'https://www.youtube.com/watch?v=sxMbXF48vYI',
+            'title' : 'Juice'
         }
         Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
     }
