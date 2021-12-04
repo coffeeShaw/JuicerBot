@@ -20,8 +20,6 @@ var searchQuery;
 const myIntents = new Intents();
 var infoFetcher = new InfoFetcher();
 myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.DIRECT_MESSAGE_TYPING, Intents.FLAGS.GUILD_MESSAGES,Intents.FLAGS.GUILD_MESSAGE_TYPING);
-//myIntents.add(8);
-//myIntents.add(1024);
 const client = new Client({ intents: myIntents, partials : ['CHANNEL', 'MESSAGE']});
 
 var connection = {};
@@ -105,7 +103,7 @@ client.on('messageCreate', async message => {
 		});
         const playItem = {
             'url' : 'https://www.youtube.com/watch?v=aGmMyeq9c34',
-            'title' : 'Speedy slubbies'
+            'title' : 'SLOBBY SLUBBIES'
         }
         Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
     }

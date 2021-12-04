@@ -15,14 +15,7 @@ const {
 } = require('@discordjs/voice');
 
 class DiscQueue{
-    playQueue;
-    histQueue;
-    stream;
-    resource;
-    player;
-    connection;
-    MAX_QUEUE_SIZE;
-    MAX_HISTORY_SIZE;
+
     constructor(){
         this.MAX_QUEUE_SIZE = 25;
         this.MAX_HISTORY_SIZE = 10;
