@@ -56,6 +56,15 @@ class DiscQueue{
         console.log("connected");
     }
 
+    pausePlayer = () =>{
+        if(typeof(this.player) === "object" )
+            this.player.pause()
+    }
+
+    resumePlayer = () =>{
+        if(typeof(this.player) === "object" )
+            this.player.unpause()
+    }
 
     // returns size of playQueue
     getQueueSize = () =>{

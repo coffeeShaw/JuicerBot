@@ -66,6 +66,14 @@ client.on('messageCreate', async message => {
             Boombox[guildID].handleQueueFrontInsertInit(vidItem, cmdChannel, connection)
         }   
     }
+    
+    if(cmdStr === ')pause'){
+        Boombox[guildID].pausePlayer();
+    }
+
+    if(cmdStr === ')resume'){
+        Boombox[guildID].resumePlayer();
+    }
 
     if(cmdStr === ')syfing'){
         var channelID = message.member.voice.channelId;
