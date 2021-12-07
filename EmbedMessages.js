@@ -15,6 +15,8 @@ class EmbedMessages{
                 {name: ')playback', value: 'Plays song that most recently ended, adds to front of queue.'},
                 {name: ')playback [num]', value: 'Plays song that was played \'num\' songs ago, adds to front of queue.'},
                 {name: ')skip', value: 'Skips current song in the queue.'},
+                {name: ')pause', value: 'Pauses track that is currently playing.'},
+                {name: ')resume', value: 'Resumes track that was playing before pause.'},
                 {name: '\u200b', value: '-'},
                 {name: 'List commands', value: 'for listing'},
                 {name: ')viewqueue', value: 'Displays all songs in the queue, including the song currently playing.'},

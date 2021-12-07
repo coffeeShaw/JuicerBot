@@ -41,6 +41,10 @@ client.on('messageCreate', async message => {
     if(cmdItr === -1){
         cmdStr = message.content;
     }
+    if(message.content.includes('juice') && message.author.id !== '908440093193285632'){ // hehe
+        cmdChannel = message.channel;
+        message.reply("You mention the juice? Good stuff homie.")
+    }
 
     // commands for playing an item
     if(cmdStr === ')play' || cmdStr === ')playnow'){
@@ -75,9 +79,10 @@ client.on('messageCreate', async message => {
         Boombox[guildID].resumePlayer();
     }
 
-    if(cmdStr === ')syfing'){
+    if(cmdStr === ')HELICOPTER'){
         var channelID = message.member.voice.channelId;
-		connection[guildID] = joinVoiceChannel({
+        cmdChannel = message.channel;
+		connection = joinVoiceChannel({
 			selfDeaf: false,
 			selfMute: false,
 			channelId: channelID,
@@ -85,11 +90,12 @@ client.on('messageCreate', async message => {
 			adapterCreator: guild.voiceAdapterCreator,
 		});
 
-        message.channel.send("IT'S HIGH NUN COL CESSIDY");
+        message.channel.send(":helicopter: :helicopter: :helicopter: :helicopter: :helicopter: :helicopter: :helicopter:");
         const playItem = {
-        'url' : 'https://www.youtube.com/watch?v=L78yVFeyvRo',
-        'title' : 'Down With The Sickness - Disturbed'
+        'url' : 'https://www.youtube.com/watch?v=3ExGuHWdXCE',
+        'title' : 'SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH'
         }
+        Boombox[guildID] = Boombox[guildID] || new DiscQueue();
         Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
     }
     
