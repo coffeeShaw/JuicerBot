@@ -23,6 +23,7 @@ myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FL
 const client = new Client({ intents: myIntents, partials : ['CHANNEL', 'MESSAGE']});
 
 var connection = {};
+// juicer, beater, crusher
 
 // holds content
 var cmdChannel; 
@@ -37,6 +38,7 @@ client.on('messageCreate', async message => {
     var cmdItr = message.content.indexOf(" ");          //  get command itr
     var cmdStr = message.content.substring(0, cmdItr);  //  get command
     var guildID = message.guildId;
+    var channelID = message.member.voice.channelId;
     var guild = message.guild;
     if(cmdItr === -1){
         cmdStr = message.content;
@@ -46,6 +48,14 @@ client.on('messageCreate', async message => {
         message.reply("You mention the juice? Good stuff homie.")
     }
 
+    connection = joinVoiceChannel({
+        selfDeaf: false,
+        selfMute: false,
+        channelId: channelID,
+        guildId: guildID,
+        adapterCreator: guild.voiceAdapterCreator,
+    });
+    cmdStr = cmdStr.toLowerCase();
     // commands for playing an item
     if(cmdStr === ')play' || cmdStr === ')playnow'){
         cmdChannel = message.channel;
@@ -53,22 +63,10 @@ client.on('messageCreate', async message => {
         console.log(searchQuery)
         var channelID = message.member.voice.channelId;
         // if connection bugs, restate to connection[guildID]
-		connection = joinVoiceChannel({
-			selfDeaf: false,
-			selfMute: false,
-			channelId: channelID,
-			guildId: guildID,
-			adapterCreator: guild.voiceAdapterCreator,
-		});
         var vidItem = await infoFetcher.getPlayData(searchQuery);
-        if(cmdStr === ')play'){
-            Boombox[guildID] = Boombox[guildID] || new DiscQueue();
-            Boombox[guildID].handleQueuePush(vidItem, cmdChannel, connection)
-        }
-        else if(cmdStr === ')playnow'){
-            Boombox[guildID] = Boombox[guildID] || new DiscQueue();
-            Boombox[guildID].handleQueueFrontInsertInit(vidItem, cmdChannel, connection)
-        }   
+        Boombox[guildID] = Boombox[guildID] || new DiscQueue();
+        cmdStr === ')play' ? Boombox[guildID].handleQueuePush(vidItem, cmdChannel, connection) : 
+                             Boombox[guildID].handleQueueFrontInsertInit(vidItem, cmdChannel, connection);
     }
     
     if(cmdStr === ')pause'){
@@ -77,26 +75,6 @@ client.on('messageCreate', async message => {
 
     if(cmdStr === ')resume'){
         Boombox[guildID].resumePlayer();
-    }
-
-    if(cmdStr === ')HELICOPTER'){
-        var channelID = message.member.voice.channelId;
-        cmdChannel = message.channel;
-		connection = joinVoiceChannel({
-			selfDeaf: false,
-			selfMute: false,
-			channelId: channelID,
-			guildId: guildID,
-			adapterCreator: guild.voiceAdapterCreator,
-		});
-
-        message.channel.send(":helicopter: :helicopter: :helicopter: :helicopter: :helicopter: :helicopter: :helicopter:");
-        const playItem = {
-        'url' : 'https://www.youtube.com/watch?v=3ExGuHWdXCE',
-        'title' : 'SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH SWOOSH'
-        }
-        Boombox[guildID] = Boombox[guildID] || new DiscQueue();
-        Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
     }
     
     if(cmdStr === ')skip'){
@@ -108,34 +86,9 @@ client.on('messageCreate', async message => {
         Boombox[guildID] = Boombox[guildID] || new DiscQueue();
         cmdChannel = message.channel;
         var channelID = message.member.voice.channelId;
-		connection = joinVoiceChannel({
-			selfDeaf: false,
-			selfMute: false,
-			channelId: channelID,
-			guildId: guildID,
-			adapterCreator: guild.voiceAdapterCreator,
-		});
         const playItem = {
             'url' : 'https://www.youtube.com/watch?v=aGmMyeq9c34',
             'title' : 'SLOBBY SLUBBIES'
-        }
-        Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
-    }
-
-    if(cmdStr === ')getthejuice'){
-        Boombox[guildID] = Boombox[guildID] || new DiscQueue();
-        cmdChannel = message.channel;
-        var channelID = message.member.voice.channelId;
-		connection = joinVoiceChannel({
-			selfDeaf: false,
-			selfMute: false,
-			channelId: channelID,
-			guildId: guildID,
-			adapterCreator: guild.voiceAdapterCreator,
-		});
-        const playItem = {
-            'url' : 'https://www.youtube.com/watch?v=sxMbXF48vYI',
-            'title' : 'Juice'
         }
         Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
     }
@@ -155,7 +108,16 @@ client.on('messageCreate', async message => {
         }
     }
 
-    if(cmdStr === ')viewhistory'){
+    if(cmdStr === ')shuffle'){
+        Boombox[guildID] = Boombox[guildID] || new DiscQueue()
+        var isShuffled = Boombox[guildID].shuffleQueue();
+        if(isShuffled)
+            message.channel.send("Shuffle is Enabled");
+        else
+            message.channel.send("Shuffle is Disabled");
+    }
+    
+    if(cmdStr === ')history'){
         Boombox[guildID] = Boombox[guildID] || new DiscQueue()
         console.log("view history")
         if(Boombox[guildID].getHistSize() === 0)
@@ -164,7 +126,7 @@ client.on('messageCreate', async message => {
             message.channel.send({embeds: [Boombox[guildID].displayHistory()]});
     }
 
-    if(cmdStr === ')viewqueue'){
+    if(cmdStr === ')queue'){
         Boombox[guildID] = Boombox[guildID] || new DiscQueue()
         console.log("view queue");
         if(Boombox[guildID].getQueueSize() === 0)

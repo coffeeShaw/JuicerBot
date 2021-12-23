@@ -25,6 +25,8 @@ class DiscQueue{
         this.resource = -1;
         this.player = -1;
         this.connection = -1;
+        this.ShuffleEnabled = false;
+        this.IndexCurrentlyPlaying = 0; // only necessary when shuffling
     }
     
     async playVid (vid, cmdChannel, conn){
@@ -66,6 +68,12 @@ class DiscQueue{
             this.player.unpause()
     }
 
+    // toggle shuffle mode, return state so we can send message to channel
+    shuffleQueue = () =>{
+        this.shuffleEnabled = !this.shuffleEnabled;
+        return this.shuffleEnabled;
+    }
+
     // returns size of playQueue
     getQueueSize = () =>{
         return this.playQueue.length;
@@ -102,7 +110,6 @@ class DiscQueue{
         else{
             this.playQueue.unshift(vidItem)
         }
-        //return playQueue[0];
         this.playVid(this.playQueue[0], cmdChannel, this.connection);
     }
 
@@ -114,7 +121,6 @@ class DiscQueue{
         else{
             this.playQueue.unshift(vidItem)
         }
-        //return playQueue[0];
         this.playVid(this.playQueue[0], cmdChannel, conn);
     }
 
@@ -142,10 +148,27 @@ class DiscQueue{
     handleQueuePop = (cmdChannel) =>{
         console.log(this.playQueue.length)
         if(this.playQueue.length > 0){
-            this.handlePlayHistory(this.playQueue[0]);
-            this.playQueue.shift();
-            if(this.playQueue.length > 0)
-                this.playVid(this.playQueue[0], cmdChannel, this.connection);
+            if(!this.shuffleEnabled){
+                if(this.IndexCurrentlyPlaying != 0){
+                    this.handlePlayHistory(this.playQueue[this.IndexCurrentlyPlaying]);
+                    this.playQueue.splice(this.IndexCurrentlyPlaying, 1);
+                }
+                else{
+                    this.handlePlayHistory(this.playQueue[0]);
+                    this.playQueue.shift();
+                }
+                this.IndexCurrentlyPlaying = 0;
+                if(this.playQueue.length > 0)
+                    this.playVid(this.playQueue[0], cmdChannel, this.connection);
+            }
+            else{
+                this.handlePlayHistory(this.playQueue[this.IndexCurrentlyPlaying]);
+                this.playQueue.splice(this.IndexCurrentlyPlaying, 1);
+                if(this.playQueue.length > 0){
+                    this.IndexCurrentlyPlaying = Math.floor(Math.random() * this.playQueue.length);
+                    this.playVid(this.playQueue[this.IndexCurrentlyPlaying], cmdChannel, this.connection);
+                }
+            }
         }
         if(this.playQueue.length === 0){
             console.log(this.player)
@@ -183,13 +206,28 @@ class DiscQueue{
         const queueEmbed = new MessageEmbed()
         var curr = "";
         queueEmbed.setTitle('Current Queue');
-        for(var i = 0; i <this.playQueue.length; i++){
-            console.log(this.playQueue[i]);
-            if(i > 0){
-                curr += i + ': ' + '[' + this.playQueue[i].title + '](' + this.playQueue[i].url + ')' + '\n'
+        if(!this.shuffleEnabled){
+            var shuffleOffset = 0;
+            curr += '*Now Playing:*  ' + '[' + this.playQueue[this.IndexCurrentlyPlaying].title + '](' + this.playQueue[this.IndexCurrentlyPlaying].url + ')' + '\n\n'
+            for(var i = 0; i < this.playQueue.length; i++){
+                console.log(this.playQueue[i]);
+                if(i != this.IndexCurrentlyPlaying){
+                    if(i === 0)
+                        shuffleOffset++;
+                    curr += (i+shuffleOffset) + ': ' + '[' + this.playQueue[i].title + '](' + this.playQueue[i].url + ')' + '\n'
+                }
+                else if(i !== 0)
+                shuffleOffset--;
+               /* else{
+                    curr += '*Now Playing:*  ' + '[' + this.playQueue[i].title + '](' + this.playQueue[i].url + ')' + '\n\n'
+                }*/
             }
-            else{
-                curr += '*Now Playing:*  ' + '[' + this.playQueue[i].title + '](' + this.playQueue[i].url + ')' + '\n\n'
+        }
+        else if(this.playQueue.length > 0){
+            curr += '(*Shuffle Is Enabled. These are all songs currently enqueued*)\n\n'
+            curr += '*Now Playing:* ' + '[' + this.playQueue[this.IndexCurrentlyPlaying].title + '](' + this.playQueue[this.IndexCurrentlyPlaying].url + ')' + '\n\n'
+            for(var i = 0; i < this.playQueue.length; i++){
+                curr += '[' + this.playQueue[i].title + '](' + this.playQueue[i].url + ')' + '\n'
             }
         }
         queueEmbed.setDescription(curr);
