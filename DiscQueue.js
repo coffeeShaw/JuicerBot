@@ -17,7 +17,7 @@ const {
 class DiscQueue{
 
     constructor(){
-        this.MAX_QUEUE_SIZE = 25;
+        this.MAX_QUEUE_SIZE = 40;
         this.MAX_HISTORY_SIZE = 10;
         this.playQueue = [];
         this.histQueue = [];
@@ -100,6 +100,26 @@ class DiscQueue{
             .setColor('YELLOW');
             cmdChannel.send({embeds: [pushEmbed]});
         } 
+    }
+
+    handleMassQueuePush  = (vidItems, cmdChannel, conn) => {
+        var validItems = 0;
+        var firstValid = -1; // edge case for where 0 is not a valid index in vidItems
+        for(var i=0; i<vidItems.length; i++){
+            if(typeof(vidItems[i]) !== "undefined"){
+                this.playQueue.push(vidItems[i]);
+                validItems++;
+                if(firstValid == -1)
+                    firstValid = i;
+            }
+        }
+        if(this.playQueue.length == validItems)
+            this.playVid(this.playQueue[firstValid], cmdChannel, conn);
+        const mixEmbed = new MessageEmbed()
+        .setTitle('Mix Added to Queue')
+        .setDescription('Mix Source: ' + '[' + vidItems[0].title + '](' + vidItems[0].url + ')')
+        .setColor('YELLOW');
+        cmdChannel.send({embeds: [mixEmbed]});
     }
 
     // pushes new playback object to front of queue, returns object in front of queue
@@ -217,10 +237,7 @@ class DiscQueue{
                     curr += (i+shuffleOffset) + ': ' + '[' + this.playQueue[i].title + '](' + this.playQueue[i].url + ')' + '\n'
                 }
                 else if(i !== 0)
-                shuffleOffset--;
-               /* else{
-                    curr += '*Now Playing:*  ' + '[' + this.playQueue[i].title + '](' + this.playQueue[i].url + ')' + '\n\n'
-                }*/
+                    shuffleOffset--;
             }
         }
         else if(this.playQueue.length > 0){

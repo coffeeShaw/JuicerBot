@@ -27,6 +27,9 @@ class InfoFetcher{
     async getPlayDataYT(searchQuery){   
         var vidID, vidName;
         var playObj = {};
+        // if a playlist
+        
+        // if a single video
         await axios.get("https://www.googleapis.com/youtube/v3/search", {
             params: {
                 part: "snippet",
@@ -47,6 +50,61 @@ class InfoFetcher{
         })
         return playObj;
     } 
+
+    // we can't actually pull generated mixes from youtube, but we can create our own with a couple custom params
+    async getYTmixPlayData(searchQuery){
+        var mixID, mixTitle;
+        var sourceObj;
+        var playObjs = [];
+        await axios.get("https://www.googleapis.com/youtube/v3/search", {
+            params: {
+                part: "snippet",
+                maxResults: 1,
+                key: YoutubeID_1,
+                q: searchQuery,
+            }
+        })
+        .then(function (response) {
+            mixID = response.data.items[0].id.videoId;
+            mixTitle = response.data.items[0].snippet.title;
+            const playObj = {
+                'url': 'https://www.youtube.com/watch?v=' + mixID,
+                'title': mixTitle
+            }
+            playObjs.push(playObj);
+        })
+        await axios.get("https://www.googleapis.com/youtube/v3/search", {
+            params: {
+                part: "snippet",
+                maxResults: 25,
+                key: YoutubeID_1,
+                relatedToVideoId: mixID,
+                type: "video",
+            }
+        })
+        .then(function(response){
+            // HANDLE exception where videos have been deleted or aren't available
+            console.log(response.data.items.length);
+            for(var i=0; i<response.data.items.length; i++){
+                // HANDLE exception where videos have been deleted or aren't available
+                var item = response.data.items[i];
+                if(typeof(item.snippet) !== "undefined"){
+                    var vidID = response.data.items[i].id.videoId;
+                    var vidName = response.data.items[i].snippet.title;
+                    vidName = he.decode(vidName);
+                    const playObj = {
+                        'url': 'https://www.youtube.com/watch?v=' + vidID,
+                        'title': vidName
+                    }
+                    playObjs.push(playObj);
+                }
+            }
+            for(var i=0; i<response.data.items.length; i++){
+                console.log(playObjs[i]);
+            }
+        })
+        return playObjs;
+    }
 
     // discord can't actually play directly from spotify, get artist info from link and play song from youtube
     async getPlayDataSpotify(searchQuery){   

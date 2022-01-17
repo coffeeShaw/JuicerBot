@@ -34,6 +34,7 @@ client.once('ready', () => {
 });
 client.login(token);
 
+
 client.on('messageCreate', async message => {
     var cmdItr = message.content.indexOf(" ");          //  get command itr
     var cmdStr = message.content.substring(0, cmdItr);  //  get command
@@ -47,17 +48,19 @@ client.on('messageCreate', async message => {
         cmdChannel = message.channel;
         message.reply("You mention the juice? Good stuff homie.")
     }
-
-    connection = joinVoiceChannel({
-        selfDeaf: false,
-        selfMute: false,
-        channelId: channelID,
-        guildId: guildID,
-        adapterCreator: guild.voiceAdapterCreator,
-    });
+   
     cmdStr = cmdStr.toLowerCase();
     // commands for playing an item
     if(cmdStr === ')play' || cmdStr === ')playnow'){
+
+        connection = joinVoiceChannel({
+            selfDeaf: false,
+            selfMute: false,
+            channelId: channelID,
+            guildId: guildID,
+            adapterCreator: guild.voiceAdapterCreator,
+        });
+
         cmdChannel = message.channel;
         searchQuery = message.content.substring(cmdItr+1);
         console.log(searchQuery)
@@ -69,6 +72,22 @@ client.on('messageCreate', async message => {
                              Boombox[guildID].handleQueueFrontInsertInit(vidItem, cmdChannel, connection);
     }
     
+    if(cmdStr === ')makemix'){
+        connection = joinVoiceChannel({
+            selfDeaf: false,
+            selfMute: false,
+            channelId: channelID,
+            guildId: guildID,
+            adapterCreator: guild.voiceAdapterCreator,
+        });
+        cmdChannel = message.channel;
+        searchQuery = message.content.substring(cmdItr+1);
+        var channelID = message.member.voice.channelId;
+        var vidItem = await infoFetcher.getYTmixPlayData(searchQuery);
+        Boombox[guildID] = Boombox[guildID] || new DiscQueue();
+        Boombox[guildID].handleMassQueuePush(vidItem, cmdChannel, connection, searchQuery) ;
+    }
+
     if(cmdStr === ')pause'){
         Boombox[guildID].pausePlayer();
     }
@@ -90,6 +109,15 @@ client.on('messageCreate', async message => {
             'url' : 'https://www.youtube.com/watch?v=aGmMyeq9c34',
             'title' : 'SLOBBY SLUBBIES'
         }
+
+        connection = joinVoiceChannel({
+            selfDeaf: false,
+            selfMute: false,
+            channelId: channelID,
+            guildId: guildID,
+            adapterCreator: guild.voiceAdapterCreator,
+        });
+
         Boombox[guildID].handleQueueFrontInsertInit(playItem, cmdChannel, connection);
     }
 
@@ -137,6 +165,10 @@ client.on('messageCreate', async message => {
 
     if(cmdStr === ')commands'){
         message.channel.send({embeds: [EmbedMessages.getCommandEmbed()]});
+    }
+
+    if(cmdStr === ')faq'){
+        message.channel.send({embeds: [EmbedMessages.getFaqEmbed()]});
     }
 })
 
