@@ -17,7 +17,8 @@ class EmbedMessages{
                 {name: ')skip', value: 'Skips current song in the queue.'},
                 {name: ')pause', value: 'Pauses track that is currently playing.'},
                 {name: ')resume', value: 'Resumes track that was playing before pause.'},
-                {name: ')shuffle', value: 'Plays tracks in the queue in random order, toggles on/off'},
+                {name: ')shuffle', value: 'Plays tracks in the queue in random order, toggles on/off.'},
+                {name: ')clear', value: "Gets rid of all songs in the queue except the one currently playing."},
                 {name: '\u200b', value: '-'},
                 {name: 'List commands', value: 'for listing'},
                 {name: ')queue', value: 'Displays all songs in the queue, including the song currently playing.'},
@@ -36,14 +37,14 @@ class EmbedMessages{
             .setDescription('This is why Juicer juices the way that it does')
             .addFields(
                 {name: 'I put in a link from spotify but it didn\'t work. How come?', 
-                 value: 'Due to how Spotify works, it isn\'t actually possible play songs from Spotify due to the encryption they ' +
-                 'use. What Juicer and most other bots actually do is get the artist and song information from spotify, then search it from ' +
-                 'other sources like Youtube. If a song doesn\'t show up properly, it\'s the result of a song being on Spotify but not Youtube'},
+                 value: 'Due to how Spotify works, it isn\'t actually possible play songs directly from Spotify.' +
+                 'What Juicer and most other bots actually do is get the artist and song information from spotify, then search it from ' +
+                 'other sources like Youtube. If a song doesn\'t show up properly, it\'s the result of a song being on Spotify but not Youtube.'},
                 {name: '\u200b', value: '-'},
                 {name: 'Why can\'t I copy the url for a mix/playlist from youtube to play all the songs in said mix/playlist?', 
                  value: 'First, we have to distinguish between mixes and playlists because Youtube does this. As of current, there' +
-                 'there is no way to directly pull a mix from Youtube into a music bot, and Juicer attempts to solve this with the )makemix command' +
-                 'that builds custom mixes from user input. As for playlists... Well, yeah dev is just kinda lazy. There will most likely be functionality soon.'},
+                 ' is no way to directly pull a mix from Youtube into a music bot because a mix is generated per user by Youtube itself. Juicer attempts to solve this with the )makemix command' +
+                 ' that builds custom mixes from user input. As for playlists... Well, yeah dev is just kinda lazy. There will most likely be functionality soon.'},
                 {name: '\u200b', value: '-'},
                 {name: 'Why do certain songs just outright not work on Juicer?', 
                  value: 'There can be a plethora of reasons. Because of how Discord bots link to Youtube, sometimes there are gaps ' +

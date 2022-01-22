@@ -207,6 +207,13 @@ class DiscQueue{
         }
     }
 
+    handleQueueClear = (cmdChannel) =>{
+        while(this.playQueue.length > 1){
+            this.playQueue.pop();
+        }
+        cmdChannel.send('Nuking the juice.');        
+    }
+
     displayHistory = () =>{
         this.histQueue = this.histQueue || []
         const histEmbed = new MessageEmbed()

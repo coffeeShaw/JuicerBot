@@ -23,7 +23,7 @@ myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FL
 const client = new Client({ intents: myIntents, partials : ['CHANNEL', 'MESSAGE']});
 
 var connection = {};
-// juicer, beater, crusher
+// juicer
 
 // holds content
 var cmdChannel; 
@@ -33,7 +33,6 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 client.login(token);
-
 
 client.on('messageCreate', async message => {
     var cmdItr = message.content.indexOf(" ");          //  get command itr
@@ -47,6 +46,57 @@ client.on('messageCreate', async message => {
     if(message.content.includes('juice') && message.author.id !== '908440093193285632'){ // hehe
         cmdChannel = message.channel;
         message.reply("You mention the juice? Good stuff homie.")
+        //message.reply("I take a dump on yo shit lil wally boi dont be messin with the juice word like that")
+    }
+
+    CustomIndexOf = (str, comp, minItr) =>{
+        var itr = str.indexOf(comp, minItr)
+        // override Index of here for the case I need
+        if(itr == -1)
+            return str.length+1
+        return itr;
+    }
+    
+    if(cmdStr === ')bMode'){       
+        console.log(message.reference);
+        if(message.reference !== null){
+            var vowelSet = new Set();
+            vowelSet.add('a');
+            vowelSet.add('e');
+            vowelSet.add('i');
+            vowelSet.add('o');
+            vowelSet.add('u');
+            vowelSet.add('A');
+            vowelSet.add('E');
+            vowelSet.add('I');
+            vowelSet.add('O');
+            vowelSet.add('U');
+            var bString = "";
+            message.channel.messages.fetch(message.reference.messageId)
+            .then(message =>{
+                bString = message.content;
+            })
+            .then(function(){
+                console.log(bString);               
+                for(var i=0; i<bString.length-1; i++){
+                    if(((bString[i] >= 'A' && bString[i] <= 'Z') || (bString[i] >= 'a' && bString[i] <= 'z')) && vowelSet.has(bString[i+1])){
+                        bString = bString.substring(0, i) + "B" + bString.substring(i+1); // all this dynamic stuff and strings are immutable???
+                    }
+                    // iterate to first element of every word
+                    var itr = Math.min(CustomIndexOf(bString, " ", i), CustomIndexOf(bString, "-", i), CustomIndexOf(bString, ",", i),
+                                       CustomIndexOf(bString, "#", i), CustomIndexOf(bString, "&", i), CustomIndexOf(bString, "(", i),
+                                       CustomIndexOf(bString, ":", i), CustomIndexOf(bString, "_", i), CustomIndexOf(bString, "@", i));
+                    console.log(itr);
+                    if(itr >= bString.length+1)
+                        break;
+                    i = itr;
+                }
+                console.log(bString);
+            })
+            .then(function(){
+                message.channel.send(bString);
+            })
+        }
     }
    
     cmdStr = cmdStr.toLowerCase();
@@ -68,8 +118,15 @@ client.on('messageCreate', async message => {
         // if connection bugs, restate to connection[guildID]
         var vidItem = await infoFetcher.getPlayData(searchQuery);
         Boombox[guildID] = Boombox[guildID] || new DiscQueue();
-        cmdStr === ')play' ? Boombox[guildID].handleQueuePush(vidItem, cmdChannel, connection) : 
-                             Boombox[guildID].handleQueueFrontInsertInit(vidItem, cmdChannel, connection);
+        if(vidItem instanceof Array){
+            console.log("array")
+            Boombox[guildID].handleMassQueuePush(vidItem, cmdChannel, connection, searchQuery) ;
+        }
+        else{
+            console.log("not array")
+            cmdStr === ')play' ? Boombox[guildID].handleQueuePush(vidItem, cmdChannel, connection) : 
+                                 Boombox[guildID].handleQueueFrontInsertInit(vidItem, cmdChannel, connection);
+        }
     }
     
     if(cmdStr === ')makemix'){
@@ -99,6 +156,11 @@ client.on('messageCreate', async message => {
     if(cmdStr === ')skip'){
         Boombox[guildID] = Boombox[guildID] || new DiscQueue();
         Boombox[guildID].handleQueuePop(cmdChannel);
+    }
+
+    if(cmdStr === ')clear'){
+        Boombox[guildID] = Boombox[guildID] || new DiscQueue();
+        Boombox[guildID].handleQueueClear(cmdChannel);
     }
 
     if(cmdStr === ')2fast2furious'){
